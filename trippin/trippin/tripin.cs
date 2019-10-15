@@ -18,6 +18,22 @@ namespace trippin
             var input = await System.IO.File.ReadAllTextAsync("users.json");
             return JsonSerializer.Deserialize<TrippinJsonFileUser[]>(input);
         }
+        public async Task addUser(UserDTO postUser)
+        {
+            var content = new StringContent(JsonSerializer.Serialize(postUser), Encoding.UTF8, "application/json");
+            var response = await HttpClient.PostAsync("People", content);
+
+            try
+            {
+                response.EnsureSuccessStatusCode();
+                Console.WriteLine(response.StatusCode);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
+        }
+
         public async Task CheckUsers()
         {
             var input = await ReadFile();
@@ -48,19 +64,8 @@ namespace trippin
                             }
                         }
                     };
+                    await addUser(postUser);
 
-                    var content = new StringContent(JsonSerializer.Serialize(postUser), Encoding.UTF8, "application/json");
-                    var response = await HttpClient.PostAsync("People", content);
-
-                    try
-                    {
-                        response.EnsureSuccessStatusCode();
-                        Console.WriteLine(response.StatusCode);
-                    }
-                    catch (Exception e)
-                    {
-                        Console.WriteLine(e.Message);
-                    }
                 }
             }
 
